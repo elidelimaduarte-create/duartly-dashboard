@@ -100,15 +100,15 @@ const MENSAGENS = [
   { tipo: 'bot',   texto: 'Hoje você gastou R$ 345,00 em 3 lançamentos. Seu maior gasto foi iFood (R$ 180,00 em 4 pedidos)! 🦙' },
 ];
 
-function ChatDemo() {
+const ChatDemo = React.memo(function ChatDemo() {
   const [msgs, setMsgs] = useState([]);
   const [idx, setIdx] = useState(0);
-  const endRef = useRef();
+  const containerRef = useRef();
 
   useEffect(() => {
     if (idx >= MENSAGENS.length) {
-      setTimeout(() => { setMsgs([]); setIdx(0); }, 3000);
-      return;
+      const t = setTimeout(() => { setMsgs([]); setIdx(0); }, 3000);
+      return () => clearTimeout(t);
     }
     const delay = idx === 0 ? 800 : MENSAGENS[idx - 1].tipo === 'user' ? 600 : 1200;
     const t = setTimeout(() => {
@@ -119,7 +119,10 @@ function ChatDemo() {
   }, [idx]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll apenas dentro do container do chat, não na página
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [msgs]);
 
   return (
@@ -147,7 +150,7 @@ function ChatDemo() {
       </div>
 
       {/* Mensagens */}
-      <div style={{
+      <div ref={containerRef} style={{
         padding: '16px 12px', minHeight: 280, maxHeight: 280,
         overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8,
         background: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234ade80' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -178,7 +181,6 @@ function ChatDemo() {
             ))}
           </div>
         )}
-        <div ref={endRef} />
       </div>
 
       {/* Input */}
@@ -202,7 +204,7 @@ function ChatDemo() {
       </div>
     </div>
   );
-}
+});
 
 // ── CARD DE FEATURE ──────────────────────────────────────────
 function FeatureCard({ icon, titulo, desc, destaque = false }) {
