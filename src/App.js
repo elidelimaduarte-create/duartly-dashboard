@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import ConvitePage from './ConvitePage';
 import AdminPage from './AdminPage';
+import ObrigadoPage from './ObrigadoPage';
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
@@ -183,6 +184,8 @@ export default function App() {
   if (isConvite) return <ConvitePage />;
   const isAdmin = path === '/admin' || path.startsWith('/admin');
   if (isAdmin) return <AdminPage />;
+  const isObrigado = path === '/obrigado';
+  if (isObrigado) return <ObrigadoPage />;
 
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
