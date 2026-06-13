@@ -63,18 +63,26 @@ function Badge({ children, color = C.accent }) {
   );
 }
 
-function Section({ children, style = {} }) {
+function Section({ children, style = {}, id }) {
   const ref = useRef();
   const [vis, setVis] = useState(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        setVis(true);
+        obs.unobserve(el); // Para de observar após animar
+      }
+    }, { threshold: 0.05 });
+    obs.observe(el);
     return () => obs.disconnect();
   }, []);
   return (
-    <section ref={ref} style={{
-      opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(30px)',
-      transition: 'opacity 0.7s ease, transform 0.7s ease',
+    <section id={id} ref={ref} style={{
+      opacity: vis ? 1 : 0,
+      transform: vis ? 'none' : 'translateY(24px)',
+      transition: 'opacity 0.6s ease, transform 0.6s ease',
       ...style
     }}>
       {children}
@@ -357,7 +365,7 @@ export default function ConvitePage() {
             </div>
 
             {/* RIGHT — Chat Demo */}
-            <div style={{ display: 'flex', justifyContent: 'center' }} className="float">
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <ChatDemo />
             </div>
           </div>
