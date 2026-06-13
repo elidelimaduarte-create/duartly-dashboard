@@ -4,6 +4,8 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer
 } from 'recharts';
+import ConvitePage from './ConvitePage';
+import AdminPage from './AdminPage';
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
@@ -175,6 +177,13 @@ function TelaLoading() {
 }
 
 export default function App() {
+  // Roteamento simples
+  const path = window.location.pathname;
+  const isConvite = path === '/convite' || path.startsWith('/c/') || new URLSearchParams(window.location.search).has('codigo');
+  if (isConvite) return <ConvitePage />;
+  const isAdmin = path === '/admin' || path.startsWith('/admin');
+  if (isAdmin) return <AdminPage />;
+
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValido, setTokenValido] = useState(false);
