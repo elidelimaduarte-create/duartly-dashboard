@@ -563,9 +563,12 @@ export default function AdminPage() {
         <ModalUsuario
           usuario={usuarioSelecionado}
           onClose={() => setUsuarioSelecionado(null)}
-          onAtualizar={() => {
-            carregarDados();
-            setUsuarioSelecionado(null);
+          onAtualizar={async () => {
+            await carregarDados();
+            // Atualiza o usuário selecionado com dados frescos
+            const { data: atualizado } = await supabase
+              .from('usuarios').select('*').eq('id', usuarioSelecionado.id).single();
+            if (atualizado) setUsuarioSelecionado(atualizado);
           }}
         />
       )}
