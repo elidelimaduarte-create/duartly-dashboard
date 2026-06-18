@@ -225,6 +225,21 @@ function ModalUsuario({ usuario, onClose, onAtualizar }) {
     setCarregando(false);
   }
 
+  async function limparHistorico() {
+    if (!window.confirm(`Tem certeza? Isso apaga TODAS as transacoes de ${usuario.nome}. Nao tem como desfazer!`)) return;
+    setCarregando(true);
+    try {
+      await supabase.from('transacoes').delete().eq('usuario_id', usuario.id);
+      await supabase.from('metas').delete().eq('usuario_id', usuario.id);
+      await supabase.from('agentes_customizados').delete().eq('usuario_id', usuario.id);
+      setMensagem('✅ Historico apagado com sucesso!');
+      onAtualizar();
+    } catch (err) {
+      setMensagem('❌ Erro ao apagar historico');
+    }
+    setCarregando(false);
+  }
+
   return (
     <div style={{
       position: 'fixed', inset: 0, background: '#000000cc',
@@ -334,6 +349,18 @@ function ModalUsuario({ usuario, onClose, onAtualizar }) {
               ▶️ Reativar acesso
             </button>
           )}
+
+          <button
+            onClick={limparHistorico}
+            disabled={carregando}
+            style={{
+              background: '#ef444411', color: tokens.danger, border: `1px solid #ef444433`,
+              borderRadius: 10, padding: '10px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
+              marginTop: 4
+            }}
+          >
+            🗑️ Limpar todo o historico
+          </button>
         </div>
 
         {mensagem && (
