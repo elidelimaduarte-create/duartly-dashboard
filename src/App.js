@@ -7,6 +7,7 @@ import {
 import ConvitePage from './ConvitePage';
 import AdminPage from './AdminPage';
 import ObrigadoPage from './ObrigadoPage';
+import ImportarPage from './ImportarPage';
 
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
@@ -186,6 +187,8 @@ export default function App() {
   if (isAdmin) return <AdminPage />;
   const isObrigado = path === '/obrigado';
   if (isObrigado) return <ObrigadoPage />;
+  const isImportar = path === '/importar';
+  if (isImportar) return <ImportarPage />;
 
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
